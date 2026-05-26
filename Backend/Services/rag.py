@@ -7,7 +7,7 @@ from Utils.Prompt import prompt_templete
 def format_docs(docs):
     return "\n\n".join(doc.page_content for doc in docs)
 
-def get_answer(query: str, file_name: str, session_id: str = "default"):
+def get_answer(query: str, file_name: str):
     data_dir = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data")
     file_path = os.path.join(data_dir, file_name)
     

@@ -3,12 +3,11 @@ import pickle
 from langchain_community.vectorstores import FAISS
 from langchain_community.retrievers import BM25Retriever
 from langchain_classic.retrievers import EnsembleRetriever
-from Services.Embedding import Embeddings
+from Services.Embedding import embeddings
 from Services.parser import load_documents
 from Utils.chunking import split_documents
 
 VECTOR_BASE_PATH = "vector_db"
-embeddings = Embeddings()
 
 def get_retriever(path: str):
     file_name = os.path.basename(path)
@@ -48,19 +47,3 @@ def get_retriever(path: str):
     )
 
     return ensemble
-
-
-if __name__ == "__main__":
-    path = r"C:\Users\HP\OneDrive\Desktop\Rag-Chatbot\Rag-Chatbot\Backend\data\9.-Nineteen-Eighty-Four-Author-George-Orwell (2).pdf"
-
-    retriever = get_retriever(path)
-    while True:
-        query = input("\nEnter query: ")
-        if query.lower() == "exit":
-            break
-        result = retriever.invoke(query)
-
-        print("Result is:\n")
-
-        for doc in result:
-            print(doc.page_content[:300])

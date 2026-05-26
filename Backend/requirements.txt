@@ -7,7 +7,8 @@ python-dotenv
 langchain_groq
 faiss-cpu
 python-docx
-sentence-transformers
+sentense-transformers
 rank_bm25
 python-multipart
+docx2txt
 

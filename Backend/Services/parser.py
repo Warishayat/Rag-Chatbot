@@ -18,12 +18,3 @@ def load_documents(file_path:str):
             f"Unsupported file type: {extension}"
         )
   return loader.load()
-
-
-
-if __name__ == "__main__":
-    path = r"C:\Users\HP\OneDrive\Desktop\Rag-Chatbot\Rag-Chatbot\Backend\data\9.-Nineteen-Eighty-Four-Author-George-Orwell (2).pdf"
-    print("loading...")
-    docs = load_documents(path)
-    print("loaded")
-    print(docs[0].metadata)

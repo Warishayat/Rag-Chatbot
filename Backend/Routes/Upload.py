@@ -1,5 +1,4 @@
 import os
-import shutil
 from fastapi import APIRouter, UploadFile, File, HTTPException
 
 router = APIRouter(prefix="/api", tags=["Upload"])
