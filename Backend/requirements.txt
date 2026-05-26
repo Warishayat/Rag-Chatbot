@@ -1,0 +1,13 @@
+langchain
+fastapi
+uvicorn
+langchain_community
+pymupdf
+python-dotenv
+langchain_groq
+faiss-cpu
+python-docx
+sentence-transformers
+rank_bm25
+python-multipart
+
