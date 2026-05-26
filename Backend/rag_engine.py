@@ -32,7 +32,8 @@ class RAGEngine:
         
         self.vector_store = PineconeVectorStore.from_existing_index(
             index_name=self.index_name,
-            embedding=self.embeddings
+            embedding=self.embeddings,
+            namespace=""
         )
         
         self.refresh_pipeline()
