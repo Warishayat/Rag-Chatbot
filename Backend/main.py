@@ -30,6 +30,11 @@ class ChatRequest(BaseModel):
 
 # --- ROUTING LOGIC ---
 
+@app.get("/")
+async def root():
+    return {"message": "Welcome to Enterprise RAG Chatbot"}
+
+
 @app.post("/upload", status_code=status.HTTP_200_OK)
 async def upload_file(file: UploadFile = File(...)):
     ext = file.filename.split(".")[-1].lower()
@@ -59,7 +64,6 @@ async def upload_file(file: UploadFile = File(...)):
 
 @app.post("/chat", status_code=status.HTTP_200_OK)
 async def chat(payload: ChatRequest):
-    # Map raw JSON objects to actual LangChain structural entities
     formatted_history = []
     for msg in payload.history:
         if msg.role == "user":
