@@ -1,15 +1,18 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
 torch
-langchain
 fastapi
 uvicorn
-langchain_community
-pymupdf
-python-dotenv
-langchain_groq
-faiss-cpu
-python-docx
-sentence-transformers
-rank_bm25
 python-multipart
+pydantic
+python-dotenv
+langchain
+langchain_community
+langchain_core
+langchain_huggingface
+langchain_pinecone
+langchain_groq
+sentence-transformers
+pymupdf
+python-docx
 docx2txt
+faiss-cpu
