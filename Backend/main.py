@@ -37,29 +37,81 @@ async def root():
 
 @app.post("/upload", status_code=status.HTTP_200_OK)
 async def upload_file(file: UploadFile = File(...)):
+
     ext = file.filename.split(".")[-1].lower()
+
     if ext not in ["pdf", "docx", "txt"]:
         raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST, 
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Unsupported format '.{ext}'."
         )
-    
-    file_path = os.path.join(UPLOAD_DIR, file.filename)
+
+    file_path = os.path.join(
+        UPLOAD_DIR,
+        file.filename
+    )
+
     try:
+
+        print("=" * 50)
+        print("UPLOAD STARTED")
+        print("FILE:", file.filename)
+        print("EXT:", ext)
+        print("PATH:", file_path)
+
         with open(file_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+            shutil.copyfileobj(
+                file.file,
+                buffer
+            )
+
+        print("FILE SAVED")
+
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-        
+
+        import traceback
+        traceback.print_exc()
+
+        raise HTTPException(
+            status_code=500,
+            detail=f"File save error: {str(e)}"
+        )
+
     try:
-        rag_backend.process_file(file_path, ext)
+
+        print("PROCESS FILE STARTED")
+
+        rag_backend.process_file(
+            file_path,
+            ext
+        )
+
+        print("PINECONE SUCCESS")
+
         if os.path.exists(file_path):
             os.remove(file_path)
-        return {"message": f"Successfully processed and stored '{file.filename}' in Pinecone."}
+
+        return {
+            "message":
+            f"Successfully processed "
+            f"'{file.filename}' "
+            f"in Pinecone."
+        }
+
     except Exception as e:
+
+        import traceback
+        traceback.print_exc()
+
+        print("RAG ERROR:", str(e))
+
         if os.path.exists(file_path):
             os.remove(file_path)
-        raise HTTPException(status_code=500, detail=str(e))
+
+        raise HTTPException(
+            status_code=500,
+            detail=f"RAG Error: {str(e)}"
+        )
 
 
 @app.post("/chat", status_code=status.HTTP_200_OK)
