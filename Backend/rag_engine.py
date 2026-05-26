@@ -8,8 +8,6 @@ from langchain_pinecone import PineconeVectorStore
 from pinecone import Pinecone
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_groq import ChatGroq
-
-# Modern LangChain core runnables
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnablePassthrough
 from langchain_core.output_parsers import StrOutputParser
