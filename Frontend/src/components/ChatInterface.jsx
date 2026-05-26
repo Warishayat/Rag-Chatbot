@@ -41,7 +41,7 @@ const ChatInterface = ({ filename, sessionId }) => {
     setIsLoading(true);
 
     try {
-      const response = await axios.post('http://127.0.0.1:8000/api/chat', {
+      const response = await axios.post('https://rag-chatbot-16ld.onrender.com/api/chat', {
         query: userMessage.content,
         filename: filename,
         session_id: sessionId
