@@ -1,3 +1,5 @@
+--extra-index-url https://download.pytorch.org/whl/cpu
+torch
 langchain
 fastapi
 uvicorn
@@ -7,8 +9,7 @@ python-dotenv
 langchain_groq
 faiss-cpu
 python-docx
-sentense-transformers
+sentence-transformers
 rank_bm25
 python-multipart
 docx2txt
-
