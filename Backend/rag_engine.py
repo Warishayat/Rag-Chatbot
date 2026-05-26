@@ -33,7 +33,7 @@ class RAGEngine:
 
         self.llm = ChatGroq(
             temperature=0.1,
-            model_name="llama3-8b-8192",
+            model_name="openai/gpt-oss-20b",
             groq_api_key=os.getenv("GROQ_API_KEY")
         )
 
