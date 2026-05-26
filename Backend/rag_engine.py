@@ -9,7 +9,9 @@ from langchain_community.document_loaders import (
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 from langchain_pinecone import PineconeVectorStore
 from pinecone import Pinecone
-from langchain_huggingface.embeddings import HuggingFaceEndpointEmbeddings
+from langchain_huggingface.embeddings import (
+    HuggingFaceEndpointEmbeddings
+)
 from langchain_groq import ChatGroq
 from langchain_core.prompts import (
     ChatPromptTemplate,
@@ -25,7 +27,7 @@ class RAGEngine:
     def __init__(self):
 
         self.embeddings = HuggingFaceEndpointEmbeddings(
-            model_name="sentence-transformers/all-MiniLM-L6-v2",
+            model="sentence-transformers/all-MiniLM-L6-v2",
             huggingfacehub_api_token=os.getenv("HF_TOKEN")
         )
 
@@ -50,9 +52,10 @@ class RAGEngine:
             )
         )
 
-        # FIXED: removed namespace=""
+        # FIX: namespace="" removed
         self.vector_store = (
-            PineconeVectorStore.from_existing_index(
+            PineconeVectorStore
+            .from_existing_index(
                 index_name=self.index_name,
                 embedding=self.embeddings
             )
@@ -63,7 +66,8 @@ class RAGEngine:
     def refresh_pipeline(self):
 
         self.retriever = (
-            self.vector_store.as_retriever(
+            self.vector_store
+            .as_retriever(
                 search_kwargs={"k": 3}
             )
         )
@@ -76,6 +80,7 @@ class RAGEngine:
         file_type: str
     ):
 
+        # FIX: Safe Pinecone delete
         try:
             index_instance = self.pc.Index(
                 self.index_name
@@ -108,6 +113,7 @@ class RAGEngine:
                 f"{str(e)}"
             )
 
+        # File Loader
         if file_type == "pdf":
             loader = PyPDFLoader(
                 file_path
@@ -152,16 +158,13 @@ class RAGEngine:
             )
 
         contextualize_q_system_prompt = (
-            "Given a chat history "
-            "and the latest user "
-            "question which might "
-            "reference context in "
-            "the chat history, "
-            "formulate a standalone "
-            "question which can be "
-            "understood without the "
-            "chat history. Do NOT "
-            "answer the question, "
+            "Given a chat history and the latest "
+            "user question which might reference "
+            "context in the chat history, "
+            "formulate a standalone question "
+            "which can be understood without "
+            "the chat history. "
+            "Do NOT answer the question, "
             "just reformulate it."
         )
 
@@ -190,20 +193,16 @@ class RAGEngine:
         )
 
         system_prompt = (
-            "You are an expert "
-            "assistant. Answer "
-            "the user's question "
-            "using EXCLUSIVELY "
-            "the provided retrieved "
-            "context from Pinecone. "
-            "Do NOT use any external "
-            "knowledge. If the answer "
-            "is not explicitly "
+            "You are an expert assistant. "
+            "Answer the user's question "
+            "using EXCLUSIVELY the provided "
+            "retrieved context from Pinecone. "
+            "Do NOT use any external knowledge. "
+            "If the answer is not explicitly "
             "mentioned in the context, "
             "reply with: "
-            "'I cannot find the "
-            "answer in the currently "
-            "uploaded document.'\n\n"
+            "'I cannot find the answer in the "
+            "currently uploaded document.'\n\n"
             "Context:\n{context}"
         )
 
@@ -279,10 +278,8 @@ class RAGEngine:
                 standalone_question,
                 str
             ):
-                standalone_question = (
-                    str(
-                        standalone_question
-                    )
+                standalone_question = str(
+                    standalone_question
                 )
 
             response = (
