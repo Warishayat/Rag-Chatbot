@@ -22,39 +22,31 @@ class RAGEngine:
         
         self.llm = ChatGroq(
             temperature=0.1,  
-            model_name="openai/gpt-oss-20b",
+            model_name="llama3-8b-8192",
             groq_api_key=os.getenv("GROQ_API_KEY")
         )
         
         self.text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
-        
         self.index_name = os.getenv("PINECONE_INDEX_NAME")
         self.pc = Pinecone(api_key=os.getenv("PINECONE_API_KEY"))
         
-        self.vector_store = PineconeVectorStore(
-            index_name=self.index_name, 
+        self.vector_store = PineconeVectorStore.from_existing_index(
+            index_name=self.index_name,
             embedding=self.embeddings
         )
         
         self.refresh_pipeline()
 
     def refresh_pipeline(self):
-        """Dynamic retrieval layers setup."""
         self.retriever = self.vector_store.as_retriever(search_kwargs={"k": 3})
         self._build_rag_chain()
 
     def process_file(self, file_path: str, file_type: str):
-        """
-        CRITICAL ISOLATION RULE: 
-        Har nayi upload par purana data wipeout hoga aur sirf naye document ke vectors save honge.
-        """
         try:
-            print(f"[PINECONE]: Flushing existing vectors from index '{self.index_name}'...")
             index_instance = self.pc.Index(self.index_name)
             index_instance.delete(delete_all=True)
-            print("[PINECONE]: Index successfully cleared.")
         except Exception as e:
-            print(f"[WARNING]: Could not clear index (maybe it was already empty): {str(e)}")
+            print(f"[PINECONE WARNING]: Index clear bypass: {str(e)}")
 
         if file_type == "pdf":
             loader = PyPDFLoader(file_path)
@@ -66,13 +58,16 @@ class RAGEngine:
         docs = loader.load()
         chunks = self.text_splitter.split_documents(docs)
         
-        self.vector_store.add_documents(chunks)
+        if chunks:
+            self.vector_store = PineconeVectorStore.from_documents(
+                documents=chunks,
+                embedding=self.embeddings,
+                index_name=self.index_name
+            )
         
         self.refresh_pipeline()
 
     def _build_rag_chain(self):
-        """Builds a history-aware conversational RAG pipeline using modern LCEL syntax."""
-        
         def format_docs(docs):
             return "\n\n".join(doc.page_content for doc in docs)
 
@@ -113,7 +108,6 @@ class RAGEngine:
         )
 
     def query(self, question: str, chat_history: list) -> str:
-        """Runs the standalone reformulation followed by the strict RAG context block."""
         try:
             if not isinstance(chat_history, list):
                 chat_history = []
@@ -138,7 +132,7 @@ class RAGEngine:
             return response
 
         except Exception as e:
-            print(f"\n[CRITICAL REG-ENGINE ERROR]: {str(e)}\n")
+            print(f"[CRITICAL REG-ENGINE ERROR]: {str(e)}")
             raise e
 
 rag_backend = RAGEngine()
