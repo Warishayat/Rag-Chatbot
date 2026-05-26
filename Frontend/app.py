@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 
-BACKEND_URL = "https://rag-chatbot-1-36uq.onrender.com"
+BACKEND_URL = "http://localhost:8000"
 
 st.set_page_config(page_title="RAG Chatbot", layout="wide")
 st.title("📂 Conversational RAG Chatbot")
